@@ -1,0 +1,5 @@
+github.com/BurntSushi/toml 99064174e013895bbd9b025c31100bd1d9b590ca
+github.com/exzz/netatmo-api-go 688dd7bf7628f59b56f370f73d1822d9bc11313c
+github.com/influxdata/influxdb d6886762663d467bbb26d3f2abe6076540b07fed
+golang.org/x/net db8e4de5b2d6653f66aea53094624468caad15d2
+golang.org/x/oauth2 ad0128250e8fba646a92ca9129716e523d63ef9f
