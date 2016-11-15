@@ -112,7 +112,7 @@ func main() {
 
 						pt, err := client.NewPoint("netatmo", tags, fields, time.Unix(int64(ts), 0))
 						if err != nil {
-							fmt.Printf("Cannot create infludb point: %s\n", err.Error())
+							fmt.Printf("Cannot create influxdb point: %s\n", err.Error())
 							continue
 						}
 						bp.AddPoint(pt)
