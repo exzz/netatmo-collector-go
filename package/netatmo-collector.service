@@ -1,0 +1,12 @@
+[Unit]
+Description=Collect and log energy monitor output
+After=network-online.target
+
+[Service]
+User=nobody
+Group=nobody
+ExecStart=/usr/bin/netatmo-collector -config /etc/netatmo-collector.conf
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

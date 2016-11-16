@@ -1,0 +1,51 @@
+pkgname='netatmo-collector'
+_gitname='netatmo-collector'
+pkgver='1'
+pkgrel='1'
+pkgdesc=''
+arch=('i686' 'x86_64')
+url=''
+license=('')
+depends=('go')
+makedepends=('go' 'git')
+provides=('netatmo-collector')
+backup=('etc/netatmo-collector.conf')
+source=('git+https://github.com/exzz/netatmo-collector-go'
+        'netatmo-collector.install')
+md5sums=('SKIP'
+         'SKIP')
+
+pkgver() {
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build()
+{
+  export GOPATH="$srcdir"
+  export GOBIN="$GOPATH/bin"
+  export PATH="$GOBIN:$PATH"
+
+  mkdir -p "$GOPATH/src/github.com/exzz"
+  mv -f "$srcdir/netatmo-collector-go" "$GOPATH/src/github.com/exzz/"
+
+  cd "$GOPATH/src/github.com/exzz/netatmo-collector-go"
+
+  echo "Downloading dependencies"
+  go get github.com/sparrc/gdm
+  gdm restore
+
+  go install netatmo-collector.go
+}
+
+package()
+{
+  cd "$GOPATH/src/github.com/exzz/netatmo-collector-go"
+  install -Dm644 sample.conf "$pkgdir/etc/netatmo-collector.conf"
+
+  cd "$GOPATH/src/github.com/exzz/netatmo-collector-go/package"
+  install -Dm644 netatmo-collector.sysusers "$pkgdir/usr/lib/sysusers.d/netatmo-collector.conf"
+  install -Dm644 netatmo-collector.service "$pkgdir/usr/lib/systemd/system/netatmo-collector.service"
+
+  cd "$GOBIN"
+  install -Dsm755 $GOBIN/netatmo-collector "$pkgdir/usr/bin/netatmo-collector"
+}
