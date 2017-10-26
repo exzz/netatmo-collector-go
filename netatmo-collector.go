@@ -67,6 +67,9 @@ func main() {
 		fmt.Printf("Unable to connect to Netatmo API: %s\n", err)
 		os.Exit(1)
 	}
+	if *fDebug {
+		fmt.Printf("Connected to netatmo API\n")
+	}
 
 	influxdb, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr:     config.Influxdb.URL,
@@ -76,6 +79,9 @@ func main() {
 	if err != nil {
 		fmt.Printf("Unable to connect to InfluxDB: %s\n", err.Error())
 		os.Exit(1)
+	}
+	if *fDebug {
+		fmt.Printf("Connected to influxdb server\n")
 	}
 
 	// main loop
@@ -105,12 +111,12 @@ func main() {
 					tags := map[string]string{"station": station.StationName, "module": module.ModuleName}
 
 					ts, data := module.Data()
-					for dataType, value := range data {
+					for dataName, value := range data {
 						fields := map[string]interface{}{
-							dataType: value,
+							dataName: value,
 						}
 
-						pt, err := client.NewPoint("netatmo", tags, fields, time.Unix(int64(ts), 0))
+						pt, err := client.NewPoint("netatmo", tags, fields, time.Unix(ts, 0))
 						if err != nil {
 							fmt.Printf("Cannot create influxdb point: %s\n", err.Error())
 							continue
@@ -119,7 +125,7 @@ func main() {
 
 						// log read value
 						if *fDebug {
-							fmt.Printf("%s %s %s %s %v\n", station.StationName, module.ModuleName, dataType, value, ts)
+							fmt.Printf("%s %s %s %s %v\n", station.StationName, module.ModuleName, dataName, value, ts)
 						}
 					}
 				}
